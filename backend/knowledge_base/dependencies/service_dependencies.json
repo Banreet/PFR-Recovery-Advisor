@@ -1,0 +1,76 @@
+{
+  "services": {
+    "PilotFish-Core": {
+      "depends_on": ["Identity-Service", "Config-Service", "Storage-Service"],
+      "description": "Core PilotFish control plane service responsible for orchestrating workloads",
+      "recovery_priority": 1,
+      "health_endpoint": "/health",
+      "typical_startup_time": "2-3 minutes",
+      "owner_team": "PilotFish-Core-Team",
+      "runbook_url": "https://wiki/pilotfish/core-recovery"
+    },
+    "PilotFish-API": {
+      "depends_on": ["PilotFish-Core", "Identity-Service"],
+      "description": "REST API gateway for PilotFish control plane",
+      "recovery_priority": 2,
+      "health_endpoint": "/health",
+      "typical_startup_time": "1-2 minutes",
+      "owner_team": "PilotFish-API-Team",
+      "runbook_url": "https://wiki/pilotfish/api-recovery"
+    },
+    "PilotFish-Scheduler": {
+      "depends_on": ["PilotFish-Core", "Storage-Service"],
+      "description": "Job scheduling and orchestration service",
+      "recovery_priority": 3,
+      "health_endpoint": "/health",
+      "typical_startup_time": "1-2 minutes",
+      "owner_team": "PilotFish-Scheduler-Team",
+      "runbook_url": "https://wiki/pilotfish/scheduler-recovery"
+    },
+    "PilotFish-Agent": {
+      "depends_on": ["PilotFish-API"],
+      "description": "Agent service running on compute nodes, communicates with control plane",
+      "recovery_priority": 4,
+      "health_endpoint": "/health",
+      "typical_startup_time": "30 seconds - 1 minute",
+      "owner_team": "PilotFish-Agent-Team",
+      "runbook_url": "https://wiki/pilotfish/agent-recovery"
+    },
+    "Identity-Service": {
+      "depends_on": [],
+      "description": "Authentication and authorization service (AAD integration)",
+      "recovery_priority": 0,
+      "health_endpoint": "/health",
+      "typical_startup_time": "1 minute",
+      "owner_team": "Identity-Team",
+      "runbook_url": "https://wiki/identity/recovery"
+    },
+    "Config-Service": {
+      "depends_on": ["Identity-Service"],
+      "description": "Centralized configuration management service",
+      "recovery_priority": 0,
+      "health_endpoint": "/health",
+      "typical_startup_time": "1 minute",
+      "owner_team": "Config-Team",
+      "runbook_url": "https://wiki/config/recovery"
+    },
+    "Storage-Service": {
+      "depends_on": ["Identity-Service"],
+      "description": "Distributed storage backend for PilotFish state and metadata",
+      "recovery_priority": 0,
+      "health_endpoint": "/health",
+      "typical_startup_time": "3-5 minutes",
+      "owner_team": "Storage-Team",
+      "runbook_url": "https://wiki/storage/recovery"
+    },
+    "Monitoring-Service": {
+      "depends_on": ["PilotFish-Core", "Storage-Service"],
+      "description": "Metrics, logging, and alerting aggregation service",
+      "recovery_priority": 5,
+      "health_endpoint": "/health",
+      "typical_startup_time": "2 minutes",
+      "owner_team": "Monitoring-Team",
+      "runbook_url": "https://wiki/monitoring/recovery"
+    }
+  }
+}

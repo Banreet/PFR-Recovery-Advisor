@@ -1,0 +1,44 @@
+{
+  "incident_id": "INC-2024-001",
+  "title": "PilotFish Control Plane Outage - Config Service Failure",
+  "date": "2024-01-10",
+  "duration": "47 minutes",
+  "severity": "P1",
+  "root_cause": "Config-Service ran out of disk space due to unrotated audit logs, causing PilotFish-Core to fail its startup health check loop and enter a crash loop.",
+  "affected_services": [
+    "Config-Service",
+    "PilotFish-Core",
+    "PilotFish-API",
+    "PilotFish-Scheduler"
+  ],
+  "timeline": [
+    {"time": "14:03 UTC", "event": "Monitoring alerts fire for PilotFish-Core health check failures"},
+    {"time": "14:05 UTC", "event": "On-call DRI acknowledged, began investigation"},
+    {"time": "14:12 UTC", "event": "Identified Config-Service returning 500 errors"},
+    {"time": "14:18 UTC", "event": "Root cause identified: disk full on Config-Service node cfg-node-02"},
+    {"time": "14:25 UTC", "event": "Emergency disk space freed by archiving old audit logs"},
+    {"time": "14:31 UTC", "event": "Config-Service restarted successfully"},
+    {"time": "14:35 UTC", "event": "PilotFish-Core restarted, health checks passing"},
+    {"time": "14:48 UTC", "event": "PilotFish-API and Scheduler restored, incident closed"}
+  ],
+  "resolution_steps": [
+    "Identified disk full condition on Config-Service node cfg-node-02",
+    "Archived audit logs older than 30 days to cold storage: tar -czf /archive/audit-$(date +%Y%m%d).tar.gz /var/log/config-service/audit/",
+    "Freed 42GB of disk space, bringing utilization from 100% to 58%",
+    "Restarted Config-Service: systemctl restart config-service",
+    "Verified Config-Service health: curl http://cfg-node-02:8080/health",
+    "Restarted PilotFish-Core in normal mode (no data corruption detected)",
+    "Validated end-to-end by submitting test workflow"
+  ],
+  "lessons_learned": [
+    "Add disk space monitoring alert at 80% threshold for Config-Service nodes",
+    "Implement automatic log rotation for Config-Service audit logs (daily, retain 7 days)",
+    "Add disk space pre-flight check to PilotFish-Core startup sequence",
+    "Update TSG to include disk space check in pre-recovery checklist"
+  ],
+  "contributing_factors": [
+    "Log rotation policy not configured for Config-Service audit logs",
+    "Disk monitoring threshold was set too high (95%) to provide adequate warning time",
+    "No automated remediation for disk space issues"
+  ]
+}
