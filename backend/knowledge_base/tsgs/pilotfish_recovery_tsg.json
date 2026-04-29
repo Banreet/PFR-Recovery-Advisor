@@ -1,0 +1,77 @@
+{
+  "title": "PilotFish Control Plane Recovery TSG",
+  "version": "2.1.0",
+  "last_updated": "2024-01-15",
+  "description": "Troubleshooting guide for recovering PilotFish control plane during outages",
+  "key_dependencies": [
+    "Identity-Service must be healthy before any PilotFish service starts",
+    "Config-Service provides runtime configuration; must be available at startup",
+    "Storage-Service data integrity must be verified before core restart",
+    "Monitoring-Service should be started last to avoid false alerts during recovery"
+  ],
+  "safe_recovery_order": [
+    "Identity-Service",
+    "Config-Service",
+    "Storage-Service",
+    "PilotFish-Core",
+    "PilotFish-API",
+    "PilotFish-Scheduler",
+    "PilotFish-Agent",
+    "Monitoring-Service"
+  ],
+  "critical_warnings": [
+    "Never restart PilotFish-Core before Identity-Service and Config-Service are healthy",
+    "Always take a snapshot before attempting storage recovery",
+    "Verify quorum on distributed storage before restarting dependent services",
+    "Do not restart Scheduler until Core API is fully healthy to avoid duplicate job execution"
+  ],
+  "sections": [
+    {
+      "title": "Pre-Recovery Checklist",
+      "content": [
+        "Acknowledge the incident in the on-call system",
+        "Notify stakeholders via incident bridge",
+        "Check last known good configuration version in Config-Service",
+        "Verify network connectivity between all service nodes",
+        "Check disk space on all storage nodes (minimum 20% free required)",
+        "Confirm no active maintenance windows conflict with recovery",
+        "Pull latest TSG version from runbook store"
+      ]
+    },
+    {
+      "title": "Service Startup Order",
+      "content": [
+        "Step 1: Identity-Service - validate with GET /health, wait for 200",
+        "Step 2: Config-Service - validate with GET /health, confirm config version matches expected",
+        "Step 3: Storage-Service - run integrity check, validate with GET /health",
+        "Step 4: PilotFish-Core - start with --recovery-mode flag if data inconsistency suspected",
+        "Step 5: PilotFish-API - validate with smoke tests against /api/v1/status",
+        "Step 6: PilotFish-Scheduler - confirm no duplicate jobs created on startup",
+        "Step 7: PilotFish-Agent - agents will auto-reconnect, monitor connection count",
+        "Step 8: Monitoring-Service - restore alerting last to reduce noise during recovery"
+      ]
+    },
+    {
+      "title": "Health Verification",
+      "content": [
+        "All services expose /health endpoint returning {status: ok, version: x.y.z}",
+        "PilotFish-Core: check /api/v1/status for control plane state",
+        "PilotFish-Scheduler: verify job queue depth is non-zero and decreasing",
+        "PilotFish-Agent: monitor agent checkin rate in Monitoring-Service dashboard",
+        "Storage-Service: run consistency check command: storage-cli verify --full",
+        "End-to-end validation: submit test job and confirm completion within 5 minutes"
+      ]
+    },
+    {
+      "title": "Rollback Procedures",
+      "content": [
+        "If recovery fails after 45 minutes, initiate rollback to last known good state",
+        "Use snapshot taken during pre-recovery checklist",
+        "Rollback command: pilotfish-ctl rollback --to-snapshot <snapshot-id>",
+        "After rollback, verify all services with health checks before declaring success",
+        "Escalate to Tier 3 if rollback also fails",
+        "Document all actions taken in the incident ticket"
+      ]
+    }
+  ]
+}
