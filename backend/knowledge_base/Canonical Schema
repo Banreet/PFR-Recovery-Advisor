@@ -1,0 +1,185 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PFRRecoveryAdvisorKnowledgeItem",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "doc_type",
+    "priority",
+    "source",
+    "service",
+    "fault_type",
+    "environment",
+    "vector_tags",
+    "confidence_level",
+    "last_validated_date",
+    "content"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the knowledge item (stable across re-ingestion)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable document or chunk title"
+    },
+    "doc_type": {
+      "type": "string",
+      "enum": [
+        "Recovery_TSG",
+        "Platform_TSG",
+        "Drill_Report",
+        "Drill_Master_ICM",
+        "RCA",
+        "Dependency_Document",
+        "KPI_Document",
+        "Automation_Document",
+        "Meeting_Transcript",
+        "Work_Item",
+        "Design_Context"
+      ]
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["P0", "P1", "P2"],
+      "description": "P0 = must-ingest, P1 = high value, P2 = contextual"
+    },
+    "source": {
+      "type": "object",
+      "required": ["source_type", "uri"],
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": ["SharePoint", "IcM", "Email", "ADO", "Teams", "GitHub"]
+        },
+        "uri": {
+          "type": "string",
+          "description": "Direct link to the source document or system of record"
+        }
+      }
+    },
+    "service": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["DM", "SEC", "PFVM", "Titan", "ZK", "Platform", "Multi"]
+      }
+    },
+    "fault_type": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "data_loss",
+          "power_down",
+          "zone_down",
+          "dependency_loss",
+          "hardware_failure",
+          "unknown"
+        ]
+      }
+    },
+    "environment": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["prod", "canary", "stage", "euap"]
+      }
+    },
+    "confidence_level": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "High = executed in real drill or incident"
+    },
+    "last_validated_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Last date this knowledge was validated via drill, incident, or review"
+    },
+    "vector_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Semantic tags used for vector search and reasoning"
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "Explicit service or system dependencies extracted from the document",
+      "items": {
+        "type": "object",
+        "required": ["depends_on", "dependency_type"],
+        "properties": {
+          "depends_on": {
+            "type": "string",
+            "description": "Service or system name (e.g., DM, Titan, FMS)"
+          },
+          "dependency_type": {
+            "type": "string",
+            "enum": ["hard", "soft", "implicit"]
+          }
+        }
+      }
+    },
+    "automation_scope": {
+      "type": "object",
+      "description": "Defines what actions are safe to automate",
+      "properties": {
+        "fully_automated": {
+          "type": "boolean"
+        },
+        "partially_automated": {
+          "type": "boolean"
+        },
+        "manual_required": {
+          "type": "boolean"
+        },
+        "automation_systems": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["RAP", "FIS", "FMS", "CustomScript", "None"]
+          }
+        }
+      }
+    },
+    "guardrails": {
+      "type": "array",
+      "description": "Constraints that prevent unsafe recommendations",
+      "items": {
+        "type": "object",
+        "required": ["type", "rule"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["authorization", "dependency", "data_loss_risk", "known_failure"]
+          },
+          "rule": {
+            "type": "string",
+            "description": "Human-readable rule to block or warn during recovery"
+          }
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The actual chunked content used for retrieval"
+        },
+        "step_number": {
+          "type": "integer",
+          "description": "Optional – used when chunking recovery steps"
+        },
+        "phase": {
+          "type": "string",
+          "enum": ["pre_drill", "fault_injection", "recovery", "validation", "post_incident"]
+        }
+      }
+    }
+  }
+}
