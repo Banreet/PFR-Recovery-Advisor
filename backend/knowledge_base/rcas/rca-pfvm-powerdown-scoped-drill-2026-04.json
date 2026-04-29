@@ -1,0 +1,54 @@
+{
+  "id": "rca-pfvm-powerdown-scoped-drill-2026-04",
+  "title": "PFVM Power Down Scoped Drill Proposal",
+  "doc_type": "Drill_Report",
+  "priority": "P1",
+  "source": {
+    "source_type": "SharePoint",
+    "uri": "rcas/PFVM Power down Scoped Drill Proposal.docx"
+  },
+  "service": ["PFVM"],
+  "fault_type": ["power_down"],
+  "environment": ["prod"],
+  "confidence_level": "medium",
+  "last_validated_date": "2026-04-29",
+  "vector_tags": [
+    "PFVM",
+    "power_down",
+    "scoped_drill",
+    "drill_proposal",
+    "fault_injection",
+    "recovery",
+    "scoped_outage"
+  ],
+  "dependencies": [
+    {
+      "depends_on": "Platform",
+      "dependency_type": "hard"
+    },
+    {
+      "depends_on": "FMS",
+      "dependency_type": "soft"
+    }
+  ],
+  "automation_scope": {
+    "fully_automated": false,
+    "partially_automated": true,
+    "manual_required": true,
+    "automation_systems": ["FMS"]
+  },
+  "guardrails": [
+    {
+      "type": "authorization",
+      "rule": "Power-down drills require DRI sign-off and approved change management ticket before execution"
+    },
+    {
+      "type": "data_loss_risk",
+      "rule": "Ensure soft-delete or snapshot backup is completed for all in-scope PFVM nodes before initiating power-down sequence"
+    }
+  ],
+  "content": {
+    "text": "PFVM Power Down Scoped Drill Proposal (April 2026). Scoped drill proposal for PFVM (PilotFish Virtual Machine) power-down recovery scenario. Covers proposed steps for testing PFVM power-down fault injection and recovery within a defined scope, including pre-drill checklist, fault injection approach, PFVM recovery sequence, and validation criteria. The drill is designed to validate recovery procedures for a controlled power-down event affecting PFVM nodes. Authored by Hope Oluwalolope; last saved by Banreet Kaur. Document spans 10 pages (~2060 words). NOTE: Source document is MIP-protected (Confidential – Internal Only); all structured fields are derived from document filename, OLE metadata, and MIP label data as the ciphertext is inaccessible without tenant credentials.",
+    "phase": "pre_drill"
+  }
+}

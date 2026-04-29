@@ -1,0 +1,55 @@
+{
+  "id": "rca-pfvm-fc-softdelete-drill-2026-05",
+  "title": "[Drill] PFVM FC Recovery on PFVMs using Soft Delete – May 2026",
+  "doc_type": "Drill_Report",
+  "priority": "P1",
+  "source": {
+    "source_type": "SharePoint",
+    "uri": "rcas/[Drill] PFVM Test FC recovery on PFVMs using Soft Delete May 2026.docx"
+  },
+  "service": ["PFVM"],
+  "fault_type": ["zone_down"],
+  "environment": ["prod"],
+  "confidence_level": "high",
+  "last_validated_date": "2026-04-29",
+  "vector_tags": [
+    "PFVM",
+    "fault_controller",
+    "FC",
+    "soft_delete",
+    "zone_down",
+    "drill",
+    "recovery",
+    "scoped_outage"
+  ],
+  "dependencies": [
+    {
+      "depends_on": "DM",
+      "dependency_type": "soft"
+    },
+    {
+      "depends_on": "Platform",
+      "dependency_type": "hard"
+    }
+  ],
+  "automation_scope": {
+    "fully_automated": false,
+    "partially_automated": true,
+    "manual_required": true,
+    "automation_systems": ["FMS", "FIS"]
+  },
+  "guardrails": [
+    {
+      "type": "data_loss_risk",
+      "rule": "Soft Delete must be confirmed enabled on all in-scope PFVMs before triggering Fault Controller (FC) recovery sequence"
+    },
+    {
+      "type": "authorization",
+      "rule": "FC recovery drills must be executed within an approved maintenance window with DRI oversight and on-call DM team notified"
+    }
+  ],
+  "content": {
+    "text": "[Drill] PFVM Test FC recovery on PFVMs using Soft Delete – May 2026. This drill validates the Fault Controller (FC) recovery procedure on PFVM nodes leveraging the Soft Delete mechanism. The drill simulates FC failure within a scoped environment and validates data integrity via Soft Delete before proceeding with PFVM re-attachment and service restoration. Covers fault injection, FC restart sequence, Soft Delete verification, PFVM re-attachment, and end-to-end validation. Authored by Banreet Kaur. Document spans 5 pages (~793 words). NOTE: Source document is MIP-protected (Confidential – Internal Only); all structured fields are derived from document filename, OLE metadata, and MIP label data as the ciphertext is inaccessible without tenant credentials.",
+    "phase": "fault_injection"
+  }
+}

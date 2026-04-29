@@ -1,0 +1,59 @@
+{
+  "id": "rca-dm-dataloss-drill-2026-04",
+  "title": "[PFR] DM Dataloss Drill – April 2026",
+  "doc_type": "Drill_Report",
+  "priority": "P0",
+  "source": {
+    "source_type": "SharePoint",
+    "uri": "rcas/[PFR] DM Dataloss drill April-26.docx"
+  },
+  "service": ["DM"],
+  "fault_type": ["data_loss"],
+  "environment": ["prod"],
+  "confidence_level": "high",
+  "last_validated_date": "2026-04-07",
+  "vector_tags": [
+    "DM",
+    "data_loss",
+    "dataloss",
+    "drill",
+    "PFR",
+    "recovery",
+    "April_2026",
+    "scoped_outage"
+  ],
+  "dependencies": [
+    {
+      "depends_on": "PFVM",
+      "dependency_type": "hard"
+    },
+    {
+      "depends_on": "Titan",
+      "dependency_type": "soft"
+    }
+  ],
+  "automation_scope": {
+    "fully_automated": false,
+    "partially_automated": true,
+    "manual_required": true,
+    "automation_systems": ["RAP", "FMS"]
+  },
+  "guardrails": [
+    {
+      "type": "data_loss_risk",
+      "rule": "No writes to affected DM partitions until DM restore protocol completes and integrity check passes"
+    },
+    {
+      "type": "authorization",
+      "rule": "DM data-loss recovery requires explicit approval from DM service owner and PFR DRI before execution"
+    },
+    {
+      "type": "known_failure",
+      "rule": "Verify no active transactions are in flight on affected DM nodes before initiating data restore; quiesce workload first"
+    }
+  ],
+  "content": {
+    "text": "[PFR] DM Dataloss Drill – April 2026. This document covers the PilotFish Recovery (PFR) drill for a scoped Data Management (DM) data-loss scenario. The drill simulates a data-loss event on DM, validating detection, escalation, recovery procedures, and data integrity verification. Covers pre-drill readiness checks, fault injection steps, DM restore sequence, partition integrity validation, and post-recovery sign-off criteria. Comprehensive drill report spanning 15 pages (~2482 words). DRM key issued 2026-04-07 (UTC). Authored by Banreet Kaur. NOTE: Source document is MIP-protected (Confidential – Internal Only); all structured fields are derived from document filename, OLE metadata, and MIP label data as the ciphertext is inaccessible without tenant credentials.",
+    "phase": "recovery"
+  }
+}
