@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from typing import Dict, List
+from typing import Dict
 from app.models.schemas import (
     OutageRequest,
     RecoveryPlanResponse,

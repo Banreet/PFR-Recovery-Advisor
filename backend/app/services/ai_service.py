@@ -1,7 +1,6 @@
 import os
 import json
 import uuid
-from typing import Optional
 from dotenv import load_dotenv
 
 from app.models.schemas import (

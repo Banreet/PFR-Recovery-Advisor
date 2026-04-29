@@ -1,6 +1,4 @@
-import pytest
-import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from fastapi.testclient import TestClient
 from app.main import app
 from app.models.schemas import RecoveryPlanResponse, RecoveryStep, ChatResponse
